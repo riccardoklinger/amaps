@@ -221,8 +221,6 @@ class AMaps:
 
     def saveCredFunction(self):
         import json
-        print("save credits")
-        #self.dlg.credentialInteraction.setText("")
         fileLocation = os.path.dirname(os.path.realpath(__file__))+ os.sep + "creds"
         #get old entries from listwidget:
         items = []
@@ -234,7 +232,10 @@ class AMaps:
             stringJSON = {"subscriptions": items}
             json.dump(stringJSON, outfile)
         self.loadCredFunction()
-        #self.dlg.credentialInteraction.setText("credentials saved to " + fileLocation + os.sep + 'credentials.json')
+        #remove entries after saving from input fields:
+        self.dlg.sub_note.setText("")
+        self.dlg.sub_key.setText("")
+        self.dlg.tier.setCurrentIndex(0)
     def removeCredFunction(self):
 
         fileLocation = os.path.dirname(os.path.realpath(__file__))+ os.sep + "creds"
