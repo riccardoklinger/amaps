@@ -199,20 +199,16 @@
     <string>remove selected key from list</string>
    </property>
   </widget>
-  <zorder>button_box</zorder>
-  <zorder>tier</zorder>
-  <zorder>horizontalLayoutWidget</zorder>
-  <zorder>label</zorder>
-  <zorder>label_2</zorder>
-  <zorder>keylist</zorder>
-  <zorder>label_3</zorder>
-  <zorder>sub_key</zorder>
-  <zorder>sub_note</zorder>
-  <zorder>label_4</zorder>
-  <zorder>removeCreds</zorder>
-  <zorder>getCreds</zorder>
-  <zorder>saveCreds</zorder>
  </widget>
+ <tabstops>
+  <tabstop>sub_note</tabstop>
+  <tabstop>sub_key</tabstop>
+  <tabstop>tier</tabstop>
+  <tabstop>saveCreds</tabstop>
+  <tabstop>keylist</tabstop>
+  <tabstop>removeCreds</tabstop>
+  <tabstop>getCreds</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
