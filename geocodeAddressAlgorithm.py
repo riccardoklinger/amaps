@@ -149,7 +149,7 @@ class geocodeAddress(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
-                self.tr('Geocoded Addresses')
+                self.tr('Geocoded Address Results')
             )
         )
 
