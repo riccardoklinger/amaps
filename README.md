@@ -8,4 +8,4 @@ Currently the following modes are supported:
 * geocode of addresses in a field of a layer
 
 ## Getting your Subscription Key
-Get your Azure Maps Subscription by creating an Azure account and subscribe to Azure Maps Services.
+Get your Azure Maps Subscription by creating an Azure account and subscribe to [Azure Maps Services](https://azure.microsoft.com/en-us/services/azure-maps/).
