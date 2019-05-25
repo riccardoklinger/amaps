@@ -204,16 +204,24 @@ class AMaps:
         #self.dlg.credentialInteraction.setText("")
         #try:
             #scriptDirectory = os.path.dirname(os.path.realpath(__file__))
-        with open(scriptDirectory + os.sep + 'creds' + os.sep + 'credentials.json') as f:
-            try:
-                data = json.load(f)
-                for entry in data["subscriptions"]:
-                    #print(entry["key"])
-                    #self.dlg.keylist.addItem(QListWidgetItem(entry["key"] + " | " + entry["tier"]))
-                    self.dlg.keylist.addItem(str(entry["note"] + " | " + entry["key"] + " | " + entry["tier"]))
-                    print("added")
-            except:
-                print("something went wrong in loading")
+        try:
+            with open(scriptDirectory + os.sep + 'creds' + os.sep + 'credentials.json') as f:
+                try:
+                    data = json.load(f)
+                    for entry in data["subscriptions"]:
+                        #print(entry["key"])
+                        #self.dlg.keylist.addItem(QListWidgetItem(entry["key"] + " | " + entry["tier"]))
+                        self.dlg.keylist.addItem(str(entry["note"] + " | " + entry["key"] + " | " + entry["tier"]))
+                        print("added")
+                except:
+                    print("something went wrong in loading")
+        except:
+            print("no file found, creating one")
+            with open(scriptDirectory + os.sep + 'creds' + os.sep + 'credentials.json', 'w') as outfile:
+                #add new entry:
+                items = []
+                stringJSON = {"subscriptions": items}
+                json.dump(stringJSON, outfile)
             #self.dlg.credentialInteraction.setText("no credits found in. Check for file" + scriptDirectory + os.sep + 'creds' + os.sep + 'credentials.json')
             #self.dlg.geocodeButton.setEnabled(False)
 

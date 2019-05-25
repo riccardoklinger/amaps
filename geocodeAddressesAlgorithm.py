@@ -40,7 +40,7 @@ import amaps
 
 import os, requests, json, time, urllib
 
-class geocodeAddress(QgsProcessingAlgorithm):
+class geocodeAddresses(QgsProcessingAlgorithm):
     def __init__(self):
         super().__init__()
         #amaps.getCredentials()
@@ -62,10 +62,10 @@ class geocodeAddress(QgsProcessingAlgorithm):
     # calling from the QGIS console.
 
     INPUT = 'INPUT'
+    FIELD = 'FIELD'
     KEY = 'KEY'
-    OUTPUT = 'OUTPUT'
-    #AddressField = 'Address Field'
 
+    OUTPUT = 'OUTPUT'
 
     #print(test)
     def tr(self, string):
@@ -85,21 +85,21 @@ class geocodeAddress(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'geocodeFieldAddress'
+        return 'geocodeFieldAddresses'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Geocode Address String')
+        return self.tr('Geocode Addresses from Layer')
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('geocode')
+        return self.tr('geocodeAddresses')
 
     def groupId(self):
         """
@@ -117,7 +117,7 @@ class geocodeAddress(QgsProcessingAlgorithm):
         should provide a basic description about what the algorithm does and the
         parameters and outputs associated with it..
         """
-        return self.tr("This processing algorithm supports geocoding of a single address.<br> Make sure your Azure Maps API credentials are managed in the plugin dialog. Please read the referenced <a href='https://www.microsoftvolumelicensing.com/DocumentSearch.aspx?Mode=3&DocumentTypeId=31'>Terms of Usage</a> prior usage" )
+        return self.tr("This processing algorithm supports geocoding of a layer with an address field (example: a delimited text file).<br> Make sure your Azure Maps API credentials are managed in the plugin dialog. Please read the referenced <a href='https://www.microsoftvolumelicensing.com/DocumentSearch.aspx?Mode=3&DocumentTypeId=31'>Terms of Usage</a> prior usage" )
 
     def initAlgorithm(self, config=None):
         """
@@ -137,11 +137,22 @@ class geocodeAddress(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterString(
+            QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input Address')
+                self.tr('Input table'),
+                [QgsProcessing.TypeVector]
             )
         )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.FIELD,
+                self.tr('Address Field'),
+                parentLayerParameterName=self.INPUT,
+                type=QgsProcessingParameterField.String
+
+            )
+        )
+
 
         # We add a feature sink in which to store our processed features (this
         # usually takes the form of a newly created vector layer when the
@@ -149,7 +160,7 @@ class geocodeAddress(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
-                self.tr('Geocoded Addresses')
+                self.tr('Geocoded Addresses Results')
             )
         )
 
@@ -161,9 +172,14 @@ class geocodeAddress(QgsProcessingAlgorithm):
         # Retrieve the feature source and sink. The 'dest_id' variable is used
         # to uniquely identify the feature sink, and must be included in the
         # dictionary returned by the processAlgorithm function.
-        addressField = self.parameterAsString(
+        source = self.parameterAsSource(
             parameters,
             self.INPUT,
+            context
+        )
+        addressField = self.parameterAsString(
+            parameters,
+            self.FIELD,
             context
         )
         #print(self.KEY)
@@ -198,26 +214,33 @@ class geocodeAddress(QgsProcessingAlgorithm):
 
         if sink is None:
             raise QgsProcessingException(self.invalidSinkError(parameters, self.OUTPUT))
+        total = 100.0 / source.featureCount() if source.featureCount() else 0
+        features = source.getFeatures()
+        for current, feature in enumerate(features):
+            # Stop the algorithm if cancel button has been clicked
+            if feedback.isCanceled():
+                break
+            r = requests.get('https://atlas.microsoft.com/search/address/json?api-version=1.0&subscription-key='+ key + '&query=' + feature[addressField])
+            if r.status_code == 200:
+                results = r.json()["results"]
+                if len(results) > 0:
+                    fid = 0
+                    for result in results:
+                        fet = QgsFeature()
+                        fet.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(result["position"]["lon"],result["position"]["lat"])))
+                        fet.setAttributes([
+                          feature.id(),
+                          feature[addressField],
+                          result["address"]["freeformAddress"],
+                          result["type"],
+                          result["score"],
+                          result["position"]["lat"],
+                          result["position"]["lon"]
+                        ])
+                        fid+=1
+                        sink.addFeature(fet, QgsFeatureSink.FastInsert)
 
-        r = requests.get('https://atlas.microsoft.com/search/address/json?api-version=1.0&subscription-key='+ key + '&query=' + addressField)
-        if r.status_code == 200:
-            results = r.json()["results"]
-            if len(results) > 0:
-                fid = 0
-                for result in results:
-                    fet = QgsFeature()
-                    fet.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(result["position"]["lon"],result["position"]["lat"])))
-                    fet.setAttributes([
-                      fid,
-                      addressField,
-                      result["address"]["freeformAddress"],
-                      result["type"],
-                      result["score"],
-                      result["position"]["lat"],
-                      result["position"]["lon"]
-                    ])
-                    fid+=1
-                    sink.addFeature(fet, QgsFeatureSink.FastInsert)
-            return {self.OUTPUT: dest_id}
-        else:
-            raise QgsProcessingException("API response: " + str(r.status_code) )
+            else:
+                raise QgsProcessingException("API response: " + str(r.status_code) )
+            feedback.setProgress(int(current * total))
+        return {self.OUTPUT: dest_id}
