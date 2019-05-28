@@ -21,6 +21,7 @@ class credloader():
             return keyStrings
         except:
             print("no credentials file found, new file will be created")
+            return keyStrings
     def loadKey(self,i):
         import json, os
         scriptDirectory = os.path.dirname(os.path.realpath(__file__))

@@ -117,7 +117,12 @@ class geocodeAddress(QgsProcessingAlgorithm):
         should provide a basic description about what the algorithm does and the
         parameters and outputs associated with it..
         """
-        return self.tr("This processing algorithm supports geocoding of a single address.<br> Make sure your Azure Maps API credentials are managed in the plugin dialog. Please read the referenced <a href='https://www.microsoftvolumelicensing.com/DocumentSearch.aspx?Mode=3&DocumentTypeId=31'>Terms of Usage</a> prior usage" )
+        self.keys = credloader().getCredentials()
+        if len(self.keys) == 0:
+            warning = "<b>Attention! No key in your credentials.json file found!<b>"
+        else:
+            warning = ""
+        return self.tr("This processing algorithm supports geocoding of a single address.<br> Make sure your Azure Maps API credentials are managed in the plugin dialog. Please read the referenced <a href='https://www.microsoftvolumelicensing.com/DocumentSearch.aspx?Mode=3&DocumentTypeId=31'>Terms of Usage</a> prior usage.<br>" + warning )
 
     def initAlgorithm(self, config=None):
         """
