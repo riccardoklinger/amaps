@@ -159,7 +159,7 @@ class POIs(QgsProcessingAlgorithm):
                 self.tr('Radius around Points [m]'),
                 defaultValue=100,
                 minValue=1,
-                maxValue=100000,
+                maxValue=50000,
                 optional=False,
             )
         )

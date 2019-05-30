@@ -23,7 +23,7 @@ repository=https://github.com/riccardoklinger/amaps
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-# changelog= 0.2 POI search enabled
+changelog= 0.2 POI search enabled
   0.1 initial push
 
 # Tags are comma separated with spaces allowed
