@@ -127,7 +127,7 @@ class POIsByCategories(QgsProcessingAlgorithm):
             warning = "<b>Attention! No key in your credentials.json file found!<b>"
         else:
             warning = ""
-        return self.tr("This processing algorithm collects POIs based on a selected category around features of a point layer using a metric radius in meters.<br>For a complete list of categories and examples visit the <a href='https://docs.microsoft.com/en-us/azure/azure-maps/supported-search-categories'>reference</a>.<br> Make sure your Azure Maps API credentials are managed in the plugin dialog. Please read the referenced <a href='https://www.microsoftvolumelicensing.com/DocumentSearch.aspx?Mode=3&DocumentTypeId=31'>Terms of Usage</a> prior usage.<br>" + warning )
+        return self.tr("This processing algorithm collects POIs based on a selected category around features of a point layer using a metric radius in meters.<br>For a complete list of POI categories and examples visit the <a href='https://docs.microsoft.com/en-us/azure/azure-maps/supported-search-categories'>reference</a>.<br> Make sure your Azure Maps API credentials are managed in the plugin dialog. Please read the referenced <a href='https://www.microsoftvolumelicensing.com/DocumentSearch.aspx?Mode=3&DocumentTypeId=31'>Terms of Usage</a> prior usage.<br>" + warning )
 
     def initAlgorithm(self, config=None):
         """
