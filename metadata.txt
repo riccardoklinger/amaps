@@ -10,7 +10,7 @@
 name=A-Maps
 qgisMinimumVersion=3.0
 description=Connector for the Azure Maps REST API
-version=0.1
+version=0.2
 author=Riccardo Klinger
 email=riccardo.klinger@gmail.com
 
@@ -23,7 +23,8 @@ repository=https://github.com/riccardoklinger/amaps
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-# changelog= 0.1 initial push
+# changelog= 0.2 POI search enabled
+  0.1 initial push
 
 # Tags are comma separated with spaces allowed
 tags=bing, geocoding, processing, python, Azure, API
