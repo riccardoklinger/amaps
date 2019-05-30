@@ -25,6 +25,8 @@ from qgis.core import QgsProcessingProvider
 from processing.core.ProcessingConfig import Setting, ProcessingConfig
 from .geocodeAddressAlgorithm import geocodeAddress
 from .geocodeAddressesAlgorithm import geocodeAddresses
+from .POIsearchCategory import POIsByCategories
+from .POIsearch import POIs
 
 __author__ = 'Riccardo Klinger'
 __date__ = '2019-05-15'
@@ -88,6 +90,6 @@ class amapsProvider(QgsProcessingProvider):
         cleared before calling this method.
         """
 
-        self.alglist = [geocodeAddress(), geocodeAddresses()]
+        self.alglist = [geocodeAddress(), geocodeAddresses(), POIsByCategories(), POIs()]
         for alg in self.alglist:
             self.addAlgorithm(alg)
